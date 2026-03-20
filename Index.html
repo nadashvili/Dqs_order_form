@@ -3,68 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QDS Test App</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>QDS Order form</title>
     <style>
+        :root {
+            --main-blue: #0056b3;
+            --light-blue: #e7f1ff;
+            --white: #ffffff;
+            --text-dark: #333333;
+        }
+
         body {
-            font-family: sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #222);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--light-blue);
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
+            color: var(--text-dark);
         }
+
         .container {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border-top: 6px solid var(--main-blue);
+        }
+
+        h2 {
             text-align: center;
-            padding: 20px;
-            border-radius: 15px;
-            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            color: var(--main-blue);
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 22px;
         }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--main-blue);
+            box-shadow: 0 0 5px rgba(0,86,179,0.2);
+        }
+
         button {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
+            width: 100%;
+            padding: 15px;
+            background-color: var(--main-blue);
+            color: var(--white);
             border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            transition: background 0.3s ease;
+            text-transform: uppercase;
         }
-        h1 { font-size: 20px; }
+
+        button:hover {
+            background-color: #004494;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .copy-status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #28a745;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>გამარჯობა, <span id="user-name">სტუმარო</span>! 👋</h1>
-    <p>ეს არის შენი პირველი Telegram Mini App</p>
-    <div id="user-id"></div>
-    <button onclick="showAlert()">დააჭირე ვიბრაციისთვის</button>
-    <button onclick="closeApp()" style="background: #e53935;">დახურვა</button>
+    <h2>QDS Order form</h2>
+    
+    <div class="input-group">
+        <label>📦 ნივთი</label>
+        <input type="text" id="item" placeholder="მაგ: სამაჯური">
+    </div>
+
+    <div class="input-group">
+        <label>📍 ნივთის მდებარეობა</label>
+        <input type="text" id="itemLoc" placeholder="მაგ: გლდანი">
+    </div>
+
+    <div class="input-group">
+        <label>📍 მყიდველის მდებარეობა</label>
+        <input type="text" id="buyerLoc" placeholder="მაგ: საბურთალო">
+    </div>
+
+    <div class="input-group">
+        <label>☎️ ტელეფონის ნომერი</label>
+        <input type="text" id="phone" value="+995 ">
+    </div>
+
+    <div class="input-group">
+        <label>💰 საწყისი ფასი (₾)</label>
+        <input type="number" id="price" placeholder="მაგ: 10">
+    </div>
+
+    <button onclick="copyToClipboard()">კოპირება & გაგზავნა</button>
+    <div id="status" class="copy-status">✅ ტექსტი მზადაა ჩასასმელად!</div>
 </div>
 
 <script>
-    // ტელეგრამის აპლიკაციის ინიციალიზაცია
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // აპლიკაცია იხსნება მთელ ეკრანზე
+    function copyToClipboard() {
+        const item = document.getElementById('item').value;
+        const itemLoc = document.getElementById('itemLoc').value;
+        const buyerLoc = document.getElementById('buyerLoc').value;
+        const phone = document.getElementById('phone').value;
+        const price = document.getElementById('price').value;
 
-    // მომხმარებლის სახელის გამოჩენა
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
-        document.getElementById('user-id').innerText = "ID: " + tg.initDataUnsafe.user.id;
-    }
+        const template = `////////////////////////
+📦 **შეკვეთა**
+///////////////////////
 
-    function showAlert() {
-        tg.HapticFeedback.impactOccurred('heavy'); // ტელეფონის ვიბრაცია
-        tg.showAlert("QDS სისტემა მუშაობს!");
-    }
+**🟢 ნივთი:** ${item}
 
-    function closeApp() {
-        tg.close(); // აპლიკაციის დახურვა
+**📍 ნივთის მდებარეობა:** ${itemLoc}
+
+**📍 მყიდველის მდებარეობა**: ${buyerLoc}
+
+**☎️ ტელეფონის ნომერი:** \` ${phone} \`
+
+**💰 საწყისი ფასი (₾):** ${price}`;
+
+        // Textarea-ს შექმნა კოპირებისთვის
+        const el = document.createElement('textarea');
+        el.value = template;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+
+        // სტატუსის ჩვენება
+        const status = document.getElementById('status');
+        status.style.display = 'block';
+        setTimeout(() => {
+            status.style.display = 'none';
+        }, 2000);
     }
 </script>
 
