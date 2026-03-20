@@ -4,173 +4,277 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QDS Order form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --main-blue: #0056b3;
-            --light-blue: #e7f1ff;
+            /* Exact blue from the QDS logo */
+            --primary-blue: #007bff; 
+            --dark-blue: #0056b3;
             --white: #ffffff;
-            --text-dark: #333333;
+            --bg-light: #f8f9fa;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #ddd;
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.08);
         }
 
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: var(--light-blue);
+            background-color: var(--bg-light);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            color: var(--text-dark);
+            color: var(--text-main);
+            padding: 20px;
         }
 
-        .container {
+        .order-card {
             background: var(--white);
             padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: var(--shadow-card);
             width: 100%;
-            max-width: 400px;
-            border-top: 6px solid var(--main-blue);
+            max-width: 480px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease;
+        }
+
+        /* Logo and Header */
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .logo-placeholder {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-blue);
+            border-radius: 12px;
+            color: var(--white);
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 15px auto;
+            /* Placeholder for image - once you have a real file, uncomment the line below */
+            /* background-image: url('your-logo.png'); background-size: cover; */
         }
 
         h2 {
-            text-align: center;
-            color: var(--main-blue);
-            margin-top: 0;
+            margin: 0;
+            color: var(--primary-blue);
+            font-size: 24px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 22px;
+            font-weight: 800;
         }
 
-        .input-group {
-            margin-bottom: 20px;
+        /* Form Styling */
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
         }
 
         label {
-            display: block;
-            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 9px;
             font-weight: 600;
             font-size: 14px;
+            color: var(--text-main);
+        }
+
+        label i {
+            margin-right: 8px;
+            color: var(--primary-blue);
+            width: 18px;
+            text-align: center;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
+            padding: 14px 14px 14px 14px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
             box-sizing: border-box;
-            font-size: 15px;
-            transition: all 0.3s ease;
+            font-size: 16px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #b0b0b0;
         }
 
         input:focus {
             outline: none;
-            border-color: var(--main-blue);
-            box-shadow: 0 0 5px rgba(0,86,179,0.2);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.15);
         }
 
-        button {
+        /* Primary Button */
+        button.action-btn {
             width: 100%;
-            padding: 15px;
-            background-color: var(--main-blue);
+            padding: 18px;
+            background-color: var(--primary-blue);
             color: var(--white);
             border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
             text-transform: uppercase;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
         }
 
-        button:hover {
-            background-color: #004494;
+        button.action-btn:hover {
+            background-color: var(--dark-blue);
+            transform: translateY(-2px);
         }
 
-        button:active {
-            transform: scale(0.98);
+        button.action-btn:active {
+            transform: translateY(1px);
         }
 
+        /* Copy Status Indicator */
         .copy-status {
             text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            color: #28a745;
-            font-weight: bold;
-            display: none;
+            margin-top: 20px;
+            font-size: 15px;
+            color: #28a745; /* Success Green */
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
+
+        .copy-status.visible {
+            opacity: 1;
+        }
+
+        .copy-status i {
+            margin-right: 8px;
+        }
+
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>QDS Order form</h2>
+<div class="order-card">
+    <div class="header">
+        <div class="logo-placeholder">QDS</div>
+        <h2>QDS Order form</h2>
+    </div>
     
-    <div class="input-group">
-        <label>📦 ნივთი</label>
-        <input type="text" id="item" placeholder="მაგ: სამაჯური">
-    </div>
+    <form id="orderForm">
+        <div class="form-group">
+            <label><i class="fas fa-box"></i> ნივთი</label>
+            <input type="text" id="item" placeholder="მაგ: iPhone 13 Pro">
+        </div>
 
-    <div class="input-group">
-        <label>📍 ნივთის მდებარეობა</label>
-        <input type="text" id="itemLoc" placeholder="მაგ: გლდანი">
-    </div>
+        <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> ნივთის მდებარეობა</label>
+            <input type="text" id="itemLoc" placeholder="მაგ: გლდანი, I მრ.">
+        </div>
 
-    <div class="input-group">
-        <label>📍 მყიდველის მდებარეობა</label>
-        <input type="text" id="buyerLoc" placeholder="მაგ: საბურთალო">
-    </div>
+        <div class="form-group">
+            <label><i class="fas fa-street-view"></i> მყიდველის მდებარეობა</label>
+            <input type="text" id="buyerLoc" placeholder="მაგ: საბურთალო, წერეთელი">
+        </div>
 
-    <div class="input-group">
-        <label>☎️ ტელეფონის ნომერი</label>
-        <input type="text" id="phone" value="+995 ">
-    </div>
+        <div class="form-group">
+            <label><i class="fas fa-phone-alt"></i> ტელეფონის ნომერი</label>
+            <input type="text" id="phone" value="+995 " pattern="^\+995 \d{3} \d{3} \d{3}$">
+        </div>
 
-    <div class="input-group">
-        <label>💰 საწყისი ფასი (₾)</label>
-        <input type="number" id="price" placeholder="მაგ: 10">
-    </div>
+        <div class="form-group">
+            <label><i class="fas fa-tag"></i> საწყისი ფასი (₾)</label>
+            <input type="number" id="price" placeholder="მაგ: 1200">
+        </div>
 
-    <button onclick="copyToClipboard()">კოპირება & გაგზავნა</button>
-    <div id="status" class="copy-status">✅ ტექსტი მზადაა ჩასასმელად!</div>
+        <button type="button" class="action-btn" onclick="copyTelegramOrder()">
+            <i class="fab fa-telegram-plane" style="margin-right: 10px;"></i>
+            კოპირება Telegram-ისთვის
+        </button>
+    </form>
+
+    <div id="status" class="copy-status">
+        <i class="fas fa-check-circle"></i>
+        <span>ტექსტი პროფესიონალურად დაკოპირდა!</span>
+    </div>
 </div>
 
 <script>
-    function copyToClipboard() {
-        const item = document.getElementById('item').value;
-        const itemLoc = document.getElementById('itemLoc').value;
-        const buyerLoc = document.getElementById('buyerLoc').value;
-        const phone = document.getElementById('phone').value;
-        const price = document.getElementById('price').value;
+    function copyTelegramOrder() {
+        // 1. Get field values
+        const item = document.getElementById('item').value.trim();
+        const itemLoc = document.getElementById('itemLoc').value.trim();
+        const buyerLoc = document.getElementById('buyerLoc').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const price = document.getElementById('price').value.trim();
 
-        const template = `////////////////////////
-📦 **შეკვეთა**
-///////////////////////
+        // Check for empty fields (optional)
+        if (!item || !itemLoc || !buyerLoc || !price) {
+            alert("გთხოვთ, შეავსოთ ყველა ველი.");
+            return;
+        }
 
-**🟢 ნივთი:** ${item}
+        // 2. Format the template for maximum Telegram professionalism
+        // Uses monospaced code blocks and distinct icons for clean layout.
+        const template = `
+▬▬▬▬▬▬▬ 📦 **შეკვეთა** ▬▬▬▬▬▬▬
 
-**📍 ნივთის მდებარეობა:** ${itemLoc}
+🛍️ **პროდუქტი:** \` ${item} \`
+───────────────────────────────
+📍 **მდებარეობა (დაწყება):** \` ${itemLoc} \`
+───────────────────────────────
+📍 **დანიშნულება (მყიდველი):** \` ${buyerLoc} \`
+───────────────────────────────
+☎️ **საკონტაქტო ნომერი:** \` ${phone} \`
+───────────────────────────────
+💰 **ფასი (საწყისი):** \` ${price} ₾ \`
 
-**📍 მყიდველის მდებარეობა**: ${buyerLoc}
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+`.trim();
 
-**☎️ ტელეფონის ნომერი:** \` ${phone} \`
+        // 3. Temporary Textarea Copy Method (Modern alternative below too)
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = template;
+        tempTextarea.setAttribute('readonly', '');
+        tempTextarea.style.position = 'absolute';
+        tempTextarea.style.left = '-9999px';
+        document.body.appendChild(tempTextarea);
+        tempTextarea.select();
+        
+        // Final copy execution
+        try {
+            document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
 
-**💰 საწყისი ფასი (₾):** ${price}`;
+            // 4. Show success status
+            const statusIndicator = document.getElementById('status');
+            statusIndicator.classList.add('visible');
+            
+            // Auto-hide after 2.5 seconds
+            setTimeout(() => {
+                statusIndicator.classList.remove('visible');
+            }, 2500);
 
-        // Textarea-ს შექმნა კოპირებისთვის
-        const el = document.createElement('textarea');
-        el.value = template;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-
-        // სტატუსის ჩვენება
-        const status = document.getElementById('status');
-        status.style.display = 'block';
-        setTimeout(() => {
-            status.style.display = 'none';
-        }, 2000);
+        } catch (err) {
+            alert('კოპირებისას დაფიქსირდა შეცდომა. გთხოვთ, ხელით დააკოპიროთ.');
+            document.body.removeChild(tempTextarea);
+        }
     }
 </script>
 
