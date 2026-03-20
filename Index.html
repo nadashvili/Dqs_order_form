@@ -3,355 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>QDS – Quick Delivery Solutions</title>
+    <title>QDS Order System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            /* Exactly from QDS Logo */
-            --primary-blue: #007bff; 
-            --dark-blue: #0056b3;
-            --white: #ffffff;
-            --bg-light: #ffffff; /* pure white for Native look */
-            --text-main: #333333;
-            --text-muted: #666666;
-            --border-color: #e0e0e0;
-            --input-bg: #f5f7fa;
-            
-            /* Spacing units */
-            --unit: 10px;
+            --primary: #007bff;
+            --accent: #2ecc71;
+            --bg: #ffffff;
+            --input-fill: #f2f4f7;
+            --text: #1c1c1e;
+            --text-light: #8e8e93;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-light);
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto;
+            background-color: var(--bg);
             margin: 0;
-            color: var(--text-main);
-            padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Start from top, like app */
             min-height: 100vh;
-            box-sizing: border-box;
-            
-            /* iPhone Notch & Padding support */
             padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        .app-container {
+        .container {
             width: 100%;
-            max-width: 100%; /* No constraints, use full screen */
-            background: var(--white);
-            padding: calc(var(--unit) * 2);
-            box-sizing: border-box;
+            max-width: 440px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            border-radius: 0; /* Remove corners for App look */
         }
 
-        /* Logo and Header - Centralized & Minimal */
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: calc(var(--unit) * 4);
-            margin-top: calc(var(--unit) * 2);
-            position: relative;
+            margin: 20px 0 40px;
         }
 
-        .logo-placeholder {
-            width: 70px;
-            height: 70px;
-            background-color: var(--primary-blue);
-            border-radius: 16px; /* modern curve */
-            color: var(--white);
-            font-size: 32px;
-            font-weight: 800;
+        .brand-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 14px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            align-items: center;
-            margin: 0 auto 15px auto;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
-            /* background-image: url('logo.png'); background-size: cover; */
-        }
-
-        h2 {
-            margin: 0;
-            color: var(--text-main);
-            font-size: 26px;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.15);
         }
+
+        h1 { font-size: 22px; font-weight: 700; margin: 0; color: var(--text); }
+        p.desc { font-size: 14px; color: var(--text-light); margin: 5px 0; }
+
+        /* Form */
+        .form-content { flex: 1; }
+        .input-group { margin-bottom: 20px; }
         
-        .sub-header {
-            margin: 5px 0 0 0;
-            color: var(--text-muted);
-            font-size: 15px;
-            font-weight: 500;
-        }
-
-        /* Form Styling - Inputs are now larger & background-filled */
-        #orderForm {
-            flex-grow: 1; /* occupy space */
-            margin-bottom: calc(var(--unit) * 6); /* Space for main buttons */
-        }
-
-        .form-group {
-            margin-bottom: calc(var(--unit) * 3);
-            position: relative;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            margin-bottom: calc(var(--unit) * 0.8);
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--text-muted);
-            text-transform: uppercase;
+        label { 
+            display: block; 
+            font-size: 12px; 
+            font-weight: 700; 
+            color: var(--primary); 
+            text-transform: uppercase; 
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
-        }
-
-        label i {
-            margin-right: 6px;
-            color: var(--primary-blue);
-            width: 16px;
-            text-align: center;
-            font-size: 13px;
         }
 
         input {
             width: 100%;
-            padding: calc(var(--unit) * 1.8); /* large tap area */
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
+            padding: 16px;
+            background: var(--input-fill);
+            border: 1px solid transparent;
             border-radius: 12px;
+            font-size: 16px;
             box-sizing: border-box;
-            font-size: 17px;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-            -webkit-appearance: none; /* remove iOS default style */
-        }
-
-        input::placeholder {
-            color: #b0b0b0;
+            color: var(--text);
+            transition: all 0.2s;
         }
 
         input:focus {
             outline: none;
-            border-color: var(--primary-blue);
-            background-color: var(--white);
-            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
         }
 
-        /* Bottom Fixed Button Area (App Style) */
-        .actions-area {
+        /* Fixed Button Wrapper */
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            padding: calc(var(--unit) * 2) calc(var(--unit) * 2) calc(var(--unit) * 2 + env(safe-area-inset-bottom));
+            background: white;
+            border-top: 1px solid #eee;
+            padding: 15px 20px calc(15px + env(safe-area-inset-bottom));
             box-sizing: border-box;
-            border-top: 1px solid var(--border-color);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
+            z-index: 100;
         }
 
-        button.action-btn {
+        .btn-send {
             width: 100%;
-            padding: calc(var(--unit) * 2);
-            background-color: var(--primary-blue);
-            color: var(--white);
+            background: var(--primary);
+            color: white;
             border: none;
-            border-radius: 14px; /* app-like rounding */
-            font-size: 18px;
+            padding: 18px;
+            border-radius: 14px;
+            font-size: 17px;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
-            -webkit-tap-highlight-color: transparent; /* Remove iOS click highlight */
+            box-shadow: 0 8px 15px rgba(0, 123, 255, 0.2);
         }
 
-        button.action-btn i {
-            font-size: 19px;
-            margin-right: calc(var(--unit) * 1.2);
-        }
+        .btn-send:active { transform: scale(0.98); opacity: 0.9; }
 
-        button.action-btn:hover {
-            background-color: var(--dark-blue);
-            transform: translateY(-1px);
-        }
-
-        button.action-btn:active {
-            background-color: var(--primary-blue);
-            transform: translateY(1px);
-        }
-
-        /* Copy Status Indicator - Centralized Toast */
-        .copy-status {
+        /* Toast Message */
+        #toast {
             position: fixed;
-            top: env(safe-area-inset-top);
+            top: -100px;
             left: 50%;
-            transform: translate(-50%, -150%);
-            background: rgba(0,0,0,0.85);
-            color: #fff;
-            padding: 12px 25px;
-            border-radius: 30px;
+            transform: translateX(-50%);
+            background: #1c1c1e;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
             font-size: 14px;
-            font-weight: 600;
+            transition: top 0.4s;
+            z-index: 1000;
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-            z-index: 1001;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            gap: 8px;
         }
 
-        .copy-status.visible {
-            opacity: 1;
-            transform: translate(-50%, 20px);
-        }
-
-        .copy-status i {
-            margin-right: 8px;
-            color: #28a745;
-        }
-        
-        /* For larger desktops, cap the width */
-        @media (min-width: 600px) {
-            body {
-                align-items: center;
-                background-color: #f0f2f5;
-                padding: 0;
-            }
-            .app-container {
-                max-width: 480px;
-                min-height: auto;
-                height: 85vh;
-                border-radius: 24px;
-                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            }
-            .actions-area {
-                position: relative;
-                position: static;
-                border-top: none;
-                padding: calc(var(--unit) * 2) 0 0 0;
-                background: transparent;
-                backdrop-filter: none;
-            }
-            #orderForm {
-                margin-bottom: 0;
-            }
-        }
-
+        #toast.active { top: 20px; }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div id="toast">✅ დაკოპირდა. გადავდივართ ჩატში...</div>
+
+<div class="container">
     <div class="header">
-        <div class="logo-placeholder">QDS</div>
-        <h2>QDS შეკვეთა</h2>
-        <div class="sub-header">შეავსეთ კურიერის გამოსაძახებლად</div>
+        <div class="brand-icon">QDS</div>
+        <h1>ახალი შეკვეთა</h1>
+        <p class="desc">შეავსეთ მონაცემები სწრაფი მიწოდებისთვის</p>
     </div>
-    
-    <form id="orderForm">
-        <div class="form-group">
-            <label><i class="fas fa-box"></i> ნივთი</label>
-            <input type="text" id="item" placeholder="მაგ: iPhone 13 Pro">
-        </div>
 
-        <div class="form-group">
-            <label><i class="fas fa-map-marker-alt"></i> საიდან</label>
-            <input type="text" id="itemLoc" placeholder="მაგ: გლდანი, I მრ.">
+    <div class="form-content">
+        <div class="input-group">
+            <label>📦 რა იგზავნება?</label>
+            <input type="text" id="item" placeholder="მაგ: ამანათი, საბუთები">
         </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-street-view"></i> სად</label>
-            <input type="text" id="buyerLoc" placeholder="მაგ: საბურთალო, წერეთელი">
+        <div class="input-group">
+            <label>📍 საიდან (მისამართი)</label>
+            <input type="text" id="loc_from" placeholder="მაგ: ვაჟა-ფშაველას 7">
         </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-phone-alt"></i> ნომერი</label>
-            <input type="tel" id="phone" value="+995 " pattern="^\+995 \d{3} \d{3} \d{3}$">
+        <div class="input-group">
+            <label>🏁 სად (დანიშნულება)</label>
+            <input type="text" id="loc_to" placeholder="მაგ: გლდანი, III მრ.">
         </div>
-
-        <div class="form-group">
-            <label><i class="fas fa-tag"></i> ფასი (₾)</label>
-            <input type="number" id="price" placeholder="მაგ: 1200">
+        <div class="input-group">
+            <label>💰 ფასი (₾)</label>
+            <input type="number" id="price" placeholder="მაგ: 15">
         </div>
+        <div class="input-group">
+            <label>📱 საკონტაქტო ნომერი</label>
+            <input type="tel" id="phone" value="+995 ">
+        </div>
+        <div style="height: 100px;"></div> </div>
 
-    </form>
-    
-    <div class="actions-area">
-        <button type="button" class="action-btn" onclick="shareToTelegram()">
+    <div class="bottom-nav">
+        <button class="btn-send" onclick="sendOrder()">
             <i class="fab fa-telegram-plane"></i>
-            გაგზავნა Telegram-ში
+            გაგზავნა ჩატში
         </button>
-    </div>
-
-    <div id="status" class="copy-status">
-        <i class="fas fa-check-circle"></i>
-        <span>ფორმა გაიხსნა Telegram-ში!</span>
     </div>
 </div>
 
 <script>
-    function shareToTelegram() {
-        // 1. Get field values
+    function sendOrder() {
         const item = document.getElementById('item').value.trim();
-        const itemLoc = document.getElementById('itemLoc').value.trim();
-        const buyerLoc = document.getElementById('buyerLoc').value.trim();
-        const phone = document.getElementById('phone').value.trim();
+        const from = document.getElementById('loc_from').value.trim();
+        const to = document.getElementById('loc_to').value.trim();
         const price = document.getElementById('price').value.trim();
+        const phone = document.getElementById('phone').value.trim();
 
-        // Check for empty fields (optional)
-        if (!item || !itemLoc || !buyerLoc || !price) {
-            alert("გთხოვთ, შეავსოთ ყველა ველი.");
+        if(!item || !from || !to || !price) {
+            alert("გთხოვთ შეავსოთ ყველა ველი!");
             return;
         }
 
-        // 2. Clear, professional template with distinct icons and no excessive formatting
-        // The icons are carefully chosen for better recognition.
+        // გაუმჯობესებული ტელეგრამის შაბლონი
         const template = `
-📦 **ახალი შეკვეთა #QDS**
+🆕 **#შეკვეთაQDS**
 
-🛍️ **ნივთი:** \` ${item} \`
-📍 **საიდან:** \` ${itemLoc} \`
-🏁 **სად:** \` ${buyerLoc} \`
-💰 **ფასი:** \` ${price} ₾ \`
-
-📞 **კონტაქტი:** \` ${phone} \`
+📦 **ნივთი:** \`${item}\`
+───────────────
+📍 **საიდან:** \`${from}\`
+🏁 **სად:** \`${to}\`
+───────────────
+💰 **ფასი:** \`${price} ₾\`
+📞 **კონტაქტი:** \`${phone}\`
 
 _ნივთის ასაღებად მისწერეთ დამკვეთს პირადში._
 `.trim();
 
-        // 3. Direct Share method - uses deep link to Telegram
-        // This clears the need for temporary textareas.
-        const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(template)}`;
-        
-        try {
-            window.open(telegramUrl, '_blank');
+        navigator.clipboard.writeText(template).then(() => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('active');
 
-            // 4. Show success status
-            const statusIndicator = document.getElementById('status');
-            statusIndicator.classList.add('visible');
-            
-            // Auto-hide after 2.5 seconds
             setTimeout(() => {
-                statusIndicator.classList.remove('visible');
-            }, 2500);
-
-        } catch (err) {
-            alert('გაგზავნისას დაფიქსირდა შეცდომა. გთხოვთ, ხელით დააკოპიროთ.');
-        }
+                window.location.href = "https://t.me/QDS_Tbilisi/158";
+            }, 1200);
+        });
     }
 </script>
 
